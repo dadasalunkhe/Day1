@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Login Form</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #020617, #0f172a, #082f49);
+            color: white;
+        }
+
+        /* Falling bubble background */
+        .bubbles {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(125, 211, 252, 0.45);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+            animation: rise linear infinite;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(0) translateX(0) scale(0.7);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: translateY(-55vh) translateX(35px) scale(1);
+            }
+
+            90% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(-120vh) translateX(-25px) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Login card */
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: min(400px, 90%);
+            padding: 40px 35px;
+            border-radius: 22px;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(125, 211, 252, 0.3);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 0 45px rgba(14, 165, 233, 0.15);
+            animation: appear 0.9s ease-out;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-container h1 {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 8px;
+            color: #e0f2fe;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        /* Input fields */
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #bae6fd;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            outline: none;
+            color: white;
+            background: rgba(2, 6, 23, 0.65);
+            transition: 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .input-group input::placeholder {
+            color: #64748b;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            margin: 5px 0 25px;
+            color: #cbd5e1;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .remember input {
+            accent-color: #38bdf8;
+        }
+
+        a {
+            color: #38bdf8;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            color: #bae6fd;
+            text-decoration: underline;
+        }
+
+        /* Animated button */
+        .login-btn {
+            position: relative;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            color: #020617;
+            background: linear-gradient(90deg, #38bdf8, #22d3ee);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            overflow: hidden;
+            transition: 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(34, 211, 238, 0.35);
+        }
+
+        .login-btn:active {
+            transform: scale(0.98);
+        }
+
+        .login-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: skewX(-25deg);
+            transition: left 0.6s;
+        }
+
+        .login-btn:hover::before {
+            left: 150%;
+        }
+
+        .signup {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        #message {
+            display: none;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #7dd3fc;
+        }
+
+        @media (max-width: 420px) {
+            .login-container {
+                padding: 32px 23px;
+            }
+
+            .login-container h1 {
+                font-size: 26px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated background bubbles -->
+    <div class="bubbles" id="bubbles"></div>
+
+    <!-- Login form -->
+    <div class="login-container">
+
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Sign in to continue</p>
+
+        <form id="loginForm">
+
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <div class="options">
+                <label class="remember">
+                    <input type="checkbox" id="remember">
+                    Remember me
+                </label>
+
+                <a href="#" id="forgotLink">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">
+                Login
+            </button>
+
+            <p id="message" role="status" aria-live="polite"></p>
+
+        </form>
+
+        <p class="signup">
+            Don't have an account?
+            <a href="#" id="signupLink">Sign up</a>
+        </p>
+
+    </div>
+
+    <script>
+        // Create falling bubbles dynamically
+        const bubblesContainer = document.getElementById("bubbles");
+
+        for (let i = 0; i < 35; i++) {
+            const bubble = document.createElement("span");
+            bubble.classList.add("bubble");
+
+            const size = Math.random() * 35 + 8;
+
+            bubble.style.width = size + "px";
+            bubble.style.height = size + "px";
+            bubble.style.left = Math.random() * 100 + "%";
+            bubble.style.animationDuration =
+                (Math.random() * 10 + 8) + "s";
+            bubble.style.animationDelay =
+                (Math.random() * 12) + "s";
+
+            bubblesContainer.appendChild(bubble);
+        }
+
+        // Demo form interaction
+        const form = document.getElementById("loginForm");
+        const message = document.getElementById("message");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            message.style.display = "block";
+            message.textContent =
+                "Form submitted! Connect a backend to authenticate.";
+        });
+
+        document.getElementById("forgotLink").addEventListener(
+            "click", function(event) {
+                event.preventDefault();
+                message.style.display = "block";
+                message.textContent =
+                    "Connect a password-reset feature to continue.";
+            }
+        );
+
+        document.getElementById("signupLink").addEventListener(
+            "click", function(event) {
+                event.preventDefault();
+                message.style.display = "block";
+                message.textContent =
+                    "Connect your registration page to continue.";
+            }
+        );
+    </script>
+
+</body>
+</html>
